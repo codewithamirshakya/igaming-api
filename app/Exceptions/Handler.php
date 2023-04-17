@@ -49,13 +49,13 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
 
-        if ($exception instanceof ModelNotFoundException) {
-            return $this->errorResponse($exception->getMessage());
-        }
-
-        if ($exception instanceof ValidationException) {
-//            return $this->errorResponse($exception, 422);
-        }
+//        if ($exception instanceof ModelNotFoundException) {
+//            return $this->errorResponse($exception->getMessage());
+//        }
+//
+//        if ($exception instanceof ValidationException) {
+////            return $this->errorResponse($exception, 422);
+//        }
 
         return parent::render($request, $exception);
     }

@@ -29,7 +29,7 @@ class SettingController extends Controller
      * @return array|mixed
      * @throws \Exception
      */
-    public function getMaintenance() : ?mixed
+    public function getMaintenance() : ?array
     {
         return $this->settingService->getFrontendSettings();
     }
@@ -39,7 +39,7 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function getFaqSettings() : ?mixed
+    public function getFaqSettings() : ?object
     {
         return FaqSettingResource::collection($this->settingService->getFaqSettings());
     }
