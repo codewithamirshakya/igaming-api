@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Setting\SettingController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/settings/frontend', [SettingController::class,'getMaintenance']);
+Route::get('/settings/faqs', [SettingController::class,'getFaqSettings']);
+Route::post('/settings/redirection', [SettingController::class, 'getRedirectSettings']);

@@ -2,11 +2,15 @@
 
 namespace App\Exceptions;
 
+use App\Helpers\Response\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use Response;
     /**
      * A list of the exception types that are not reported.
      *
@@ -37,5 +41,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render error exception
+     */
+    public function render($request, Throwable $exception)
+    {
+
+        if ($exception instanceof ModelNotFoundException) {
+            return $this->errorResponse($exception->getMessage());
+        }
+
+        if ($exception instanceof ValidationException) {
+//            return $this->errorResponse($exception, 422);
+        }
+
+        return parent::render($request, $exception);
     }
 }
