@@ -7,6 +7,7 @@ use App\Constants\RedirectSettingConstant;
 use App\Models\RedirectionSetting;
 use App\Models\RedirectionSettingAccount;
 use App\Repositories\Setting\FaqSettingRepository;
+use App\Repositories\Setting\RedirectionSettingRepository;
 use App\Repositories\Setting\SettingRepository;
 use App\Repositories\Setting\RedirectSettingRepository;
 use Carbon\Carbon;
@@ -19,19 +20,26 @@ class SettingService
      * @var FaqSettingRepository
      */
     private $faqSettingRepository;
+    /**
+     * @var RedirectionSettingRepository
+     */
+    private $redirectionSettingRepository;
 
     /**
      * SettingService constructor.
      * @param SettingRepository $settingRepository
      * @param FaqSettingRepository $faqSettingRepository
+     * @param RedirectionSettingRepository $redirectionSettingRepository
      */
     public function __construct(
         SettingRepository $settingRepository,
-        FaqSettingRepository $faqSettingRepository
+        FaqSettingRepository $faqSettingRepository,
+        RedirectionSettingRepository $redirectionSettingRepository
     )
     {
-        $this->settingRepository            = $settingRepository;
-        $this->faqSettingRepository         = $faqSettingRepository;
+        $this->settingRepository                = $settingRepository;
+        $this->faqSettingRepository             = $faqSettingRepository;
+        $this->redirectionSettingRepository     = $redirectionSettingRepository;
     }
 
     /**
@@ -80,30 +88,7 @@ class SettingService
      */
     public function getRedirectSettings(array $params)
     {
-        $groupIds = RedirectionSettingAccount::where('account_id', $params['account_id'])->get()->pluck('group_id');
-
-        if (!empty($groupIds)) {
-            $redirectSettings = RedirectionSetting::
-                select(['redirect_from','redirect_to'])
-                ->when($groupIds, function ($query) use ($groupIds){
-                    return $query->whereIn('id', $groupIds);
-                })
-                ->where('status', RedirectSettingConstant::Active)
-                ->when($params['path'], function ($query) use ($params) {
-                    return $query->where('redirect_from', 'like', '%'.$params['path'].'%');
-                })
-                ->first();
-        } else {
-            $redirectSettings = RedirectionSetting::
-                select(['redirect_from','redirect_to'])
-                ->where('status', RedirectSettingConstant::Active)
-                ->when($params['path'], function ($query) use ($params) {
-                    return $query->where('redirect_from', 'like', '%'.$params['path'].'%');
-                })
-                ->where('default_fallback', true)
-                ->first();
-        }
-
+        $redirectSettings = $this->redirectionSettingRepository->getRedirectionSetting($params);
 
         return $redirectSettings->redirect_from ?? null;
 
